@@ -1,152 +1,117 @@
-{{!< default}}
-{{!-- The tag above means: insert everything in this file
-into the {body} of the default.hbs template --}}
-
-<header class="site-header outer border-primary-top">
-    <div class="inner-header">
-        <nav class="site-nav">
-            <div class="site-nav-left">
-                <a class="site-nav-logo" href="{{@site.url}}" aria-label="{{@site.title}}">
-                    <img src="{{@site.logo}}">
-                </a>
-            </div>
-            <div class="inner-header">
-                <div class="category-holder">
-                    <ul class="nav category-nav pull-left">
-                        <li class="nav-tag"><a href="/tag/Articals/" title="Atticals">Articals</a></li>
-                        <li class="nav-tag"><a href="/tag/news/" title="News">News</a></li>
-                        <li class="nav-tag"><a href="/tag/Tutorials/" title="Tutorials">Tutorials</a></li>
-                        <li>
-                            <a href="/categories">
-                                <span style="margin-left:0.5rem;">More...</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <a class="search-btn no-decoration pull-right" href="#searchinghost-easy">
-                        <span style="color: white;">
-                            <i class="fas fa-search fa-lg"></i>
-                        </span>
-                    </a>
-                    <a class="category-search no-decoration category-xs" href="/categories">
-                        <span style="margin-right:1.5rem;"><i class="fas fa-bars fa-2x"></i></span>
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </div>
-</header>
-
-
-
-
-{{!-- The main content area 
-<!-- Embla -->
-
-{{> slider}}
---}}
-
 {{!--
-<div class="outer-search category-container">
-    <div class="inner-header">
-        <div class="category-holder">
-            <ul class="nav category-nav pull-left">
-                <li class="nav-tag"><a href="/tag/exlusive/" title="Exclusive">Exclusive</a></li>
-                <li class="nav-tag"><a href="/tag/news/" title="News">News</a></li>
-                <li class="nav-tag"><a href="/tag/devices/" title="Devices">Devices</a></li>
-                <li class="nav-tag"><a href="/tag/how-to/" title="How-To">How-To</a></li>
-                <li class="nav-tag"><a href="/tag/technology/" title="Technology">Technology</a></li>
-                <li class="nav-tag"><a href="/tag/apps/" title="Apps & Software">Apps & Software</a></li>
-                <li>
-                    <a href="/categories">
-                        <span style="margin-left:0.5rem;">More...</span>
-                    </a>
-                </li>
-            </ul>
-            <a class="search-btn no-decoration pull-right" href="#ghosteasybar">
-                <span style="color: white;">
-                    <i class="fas fa-search"></i>
-                </span>
-            </a>
-            <a class="category-search no-decoration category-xs" href="/categories">
-                <span style="margin-left:0.5rem;"><i class="fas fa-bars"></i> Categories</span>
-            </a>
-        </div>
-    </div>
-</div>
+This template is used for the index page.
+It can be used also as the home page or the default page.
 --}}
 
+<style>
+  .m-hero {
+    
+    display: none;
+    background-color: white;
+}
+</style>
 
-<div class="inner posts">
 
-    <div class="post-feed">
-        {{#foreach posts}}
+{{!-- This block preloads specific assets for the index page --}}
+{{#contentFor "preload"}}
+  <link rel="preload" href="{{asset "css/home.css"}}" as="style" />
+  <link rel="preload" href="{{asset "css/listing.css"}}" as="style" />
+  <link rel="preload" href="{{asset "js/home.js"}}" as="script" />
+{{/contentFor}}
 
-        {{!-- The tag below includes the markup for each post - partials/post-card.hbs --}}
-        {{> "post-card"}}
+{{!-- This block loads specific styles for the index page --}}
+{{#contentFor "styles"}}
+  <link rel="stylesheet" type="text/css" href="{{asset "css/home.css"}}" media="screen" />
+  <link rel="stylesheet" type="text/css" href="{{asset "css/listing.css"}}" media="screen" />
+{{/contentFor}}
 
-        {{/foreach}}
+{{!-- The tag below means: insert everything in this file
+into the {body} of the default.hbs template --}}
+{{!< default}}
+
+{{!-- Special header.hbs partial to generate the <header> tag --}}
+{{> header background=@site.cover_image}}
+
+<main class="main-wrap">
+  {{!-- Inject styles of the hero image to make it responsive --}}
+  {{> hero background=@site.cover_image }}
+
+ 
+
+  </section>
+  <div class="l-content">
+    <div class="l-wrapper" data-aos="fade-up" data-aos-delay="300">
+      <div class="l-grid centered">
+        {{#get "posts" filter="featured:true" include="tags" limit="5" as |featured|}}
+          {{#if featured}}
+            <div class="m-featured-slider glide js-featured-slider">
+              <div class="glide__track" data-glide-el="track">
+                <div class="m-featured-slider__list glide__slides">
+                  {{#foreach featured}}
+                    <div class="m-featured-slider__list__item glide__slide js-featured-slide">
+                      <article class="m-featured-article {{#unless feature_image}}no-picture{{/unless}}">
+                        <div class="m-featured-article__picture">
+                          {{#if feature_image}}
+                            <style>
+                              #featured-bg-{{id}} {
+                                background-image: url({{img_url feature_image size='l'}});
+                              }
+                            
+                              @media(max-width: 768px) {
+                                #featured-bg-{{id}} {
+                                  background-image: url({{img_url feature_image size='m'}});
+                                }
+                              }
+                            </style>
+                            <div id="featured-bg-{{id}}"></div>
+                          {{/if}}
+                        </div>
+                        <div class="m-featured-article__meta">
+                          
+                          {{#if primary_tag}}
+                            <a href="{{primary_tag.url}}" class="m-featured-article__tag">{{primary_tag.name}}</a>
+                          {{/if}}
+                        </div>
+                        <div class="m-featured-article__ribbon">
+                          <span class="icon-star"></span>
+                          <span>{{t "Featured"}}</span>
+                        </div>
+                        <a href="{{url}}" class="m-featured-article__content">
+                          <h2 class="m-featured-article__title js-featured-article-title" title="{{title}}">
+                            {{title}}
+                          </h2>
+                          <div class="m-featured-article__timestamp">
+                            <span>{{date published_at timeago="true"}}</span>
+                            <span>&bull;</span>
+                            <span>{{reading_time minute=(t "1 min read") minutes=(t "% min read")}}</span>
+                          </div>
+                        </a>
+                      </article>
+                    </div>
+                  {{/foreach}}
+                </div>
+              </div>
+              <div data-glide-el="controls" class="glide__arrows js-featured-slider-controls">
+                <button data-glide-dir="<" class="m-icon-button in-featured-articles glide-prev js-featured-slider-previous" aria-label="{{t "Previous"}}">
+                  <span class="icon-arrow-left" aria-hidden="true"></span>
+                </button>
+                <button data-glide-dir=">" class="m-icon-button in-featured-articles glide-next js-featured-slider-next" aria-label="{{t "Next"}}">
+                  <span class="icon-arrow-right" aria-hidden="true"></span>
+                </button>
+              </div>
+            </div>
+          {{/if}}
+        {{/get}}
+        {{!-- The tag below iterates over all the posts --}}
+        {{> "loop"}}
+      </div>
     </div>
-
-</div>
+    {{!-- Links to Previous/Next posts --}}
+    {{pagination}}
+  </div>
 </main>
-
-{{> site-header}}
 
 {{!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs --}}
 {{#contentFor "scripts"}}
-<script>
-
-    // NOTE: Scroll performance is poor in Safari
-    // - this appears to be due to the events firing much more slowly in Safari.
-    //   Dropping the scroll event and using only a raf loop results in smoother
-    //   scrolling but continuous processing even when not scrolling
-    $(document).ready(function () {
-
-        var nav = document.querySelector('.site-nav-main .site-nav');
-        var feed = document.querySelector('.post-feed');
-
-        var lastScrollY = window.scrollY;
-        var lastWindowHeight = window.innerHeight;
-        var lastDocumentHeight = $(document).height();
-        var ticking = false;
-
-        function onScroll() {
-            lastScrollY = window.scrollY;
-            requestTick();
-        }
-
-        function onResize() {
-            lastWindowHeight = window.innerHeight;
-            lastDocumentHeight = $(document).height();
-            requestTick();
-        }
-
-        function requestTick() {
-            if (!ticking) {
-                requestAnimationFrame(update);
-            }
-            ticking = true;
-        }
-
-        function update() {
-            var trigger = feed.getBoundingClientRect().top + window.scrollY;
-            var progressMax = lastDocumentHeight - lastWindowHeight;
-
-            // show/hide nav
-            if (lastScrollY >= trigger - 20) {
-                nav.classList.add('fixed-nav-active');
-            } else {
-                nav.classList.remove('fixed-nav-active');
-            }
-
-            ticking = false;
-        }
-
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onResize, false);
-
-        update();
-
-    });
-</script>
+  <script defer src="{{asset "js/home.js"}}"></script>
 {{/contentFor}}

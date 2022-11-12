@@ -1,101 +1,121 @@
 <!DOCTYPE html>
-<html lang="{{lang}}">
-<head>
-
+<html lang="{{@site.locale}}">
+  <head>
     {{!-- Document Settings --}}
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 
     {{!-- Base Meta --}}
-    <title>{{meta_title page=(t " (Page %)")}}</title>
+    <title>{{meta_title}}</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    {{!-- Styles'n'Scripts --}}
-    <link rel="stylesheet" type="text/css" href="{{asset "built/screen.css"}}" />
+    {{!-- Preload assets --}}
+    <link rel="preload" href="{{asset "css/app.css"}}" as="style" />
+    <link rel="preload" href="{{asset "js/manifest.js"}}" as="script" />
+    <link rel="preload" href="{{asset "js/vendor/content-api.min.js"}}" as="script" />
+    <link rel="preload" href="{{asset "js/vendor.js"}}" as="script" />
+    <link rel="preload" href="{{asset "js/app.js"}}" as="script" />
+    <link rel="preconnect" href="https://polyfill.io">
+    <link rel="dns-prefetch" href="https://polyfill.io">
+
+    {{!-- This #block helper will try to preload page-specific assets --}}
+    {{{block "preload"}}}
+
+    {{!-- Styles & Scripts --}}
+    <style>
+      /* These font-faces are here to make fonts work if the Ghost instance is installed in a subdirectory */
+
+      /* source-sans-pro-regular */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: local('SourceSansPro-Regular'),
+            url("{{asset 'fonts/source-sans-pro/latin/source-sans-pro-regular.woff2'}}") format('woff2'),
+            url("{{asset 'fonts/source-sans-pro/latin/source-sans-pro-regular.woff'}}") format('woff');
+      }
+
+      /* source-sans-pro-600 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 600;
+        font-display: swap;
+        src: local('SourceSansPro-SemiBold'),
+            url("{{asset 'fonts/source-sans-pro/latin/source-sans-pro-600.woff2'}}") format('woff2'),
+            url("{{asset 'fonts/source-sans-pro/latin/source-sans-pro-600.woff'}}") format('woff');
+      }
+
+      /* source-sans-pro-700 */
+      @font-face {
+        font-family: 'Source Sans Pro';
+        font-style: normal;
+        font-weight: 700;
+        font-display: swap;
+        src: local('SourceSansPro-Bold'),
+            url("{{asset 'fonts/source-sans-pro/latin/source-sans-pro-700.woff2'}}") format('woff2'),
+            url("{{asset 'fonts/source-sans-pro/latin/source-sans-pro-700.woff'}}") format('woff');
+      }
+
+      /* iconmoon */
+      @font-face {
+        font-family: 'icomoon';
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+        src: url("{{asset 'fonts/icomoon/icomoon.eot?101fc3'}}");
+        src: url("{{asset 'fonts/icomoon/icomoon.eot?101fc3#iefix'}}") format('embedded-opentype'),
+        url("{{asset 'fonts/icomoon/icomoon.ttf?101fc3'}}") format('truetype'),
+        url("{{asset 'fonts/icomoon/icomoon.woff?101fc3'}}") format('woff'),
+        url("{{asset 'fonts/icomoon/icomoon.svg?101fc3#icomoon'}}") format('svg');
+      }
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="{{asset "css/app.css"}}" media="screen" />
+
+    {{!-- This #block helper will inject a stylesheet for a specific page --}}
+    {{{block "styles"}}}
+
+    {{!-- This #block helper will pull data from the hero partial 
+    to inject styles of the hero image to make it responsive --}}
+    {{{block "herobackground"}}}
 
     {{!-- This tag outputs SEO meta+structured data and other important settings --}}
     {{ghost_head}}
 
-</head>
-<body class="{{body_class}}">
-
-    <div class="site-wrapper">
-
-        {{!-- All the main content gets inserted here, index.hbs, post.hbs, etc --}}
-        {{{body}}}
-
-        {{!-- The footer at the very bottom of the screen --}}
-        <footer class="site-footer outer">
-            <div class="site-footer-content inner">
-                <section class="copyright"><a href="{{@blog.url}}">{{@blog.title}}</a> &copy; {{date format="YYYY"}}</a>
-                <a href="https://facebook.com/banzgeek" target="_blank" rel="noopener">facebook </a>
-               <a href="https://twitter.com/banzgeek" target =" _blank" rel="noopener">twitter </a> </section>
-                <nav class="site-footer-nav">
-                    <a href="{{@blog.url}}">{{t "Latest"}}</a>
-                    <a href="https:// banzgeek.com/terms-and-conditions/"target="_blank" rel="noopener">Terms of Service </a>
-                    <a href="https://banzgeek.com/privacy-policy/" target="_blank" rel="noopener">Privacy Policy </a>
-                    <a href="https://banzgeek.com/disclaimer/" target="_blank" rel="noopener"> Disclaimer </a>
-                    <a href="https://banzgeek.com/fact-checking-policy/" target="_blank" rel="noopener"> Fact Check Policy </a>
-                    <a href="https://banzgeek.com/ethics-policy/" target="_blank" rel="noopener"> Ethics Policy </a>
-                    <a href="https://banzgeek.com/correction-policy/" target="_blank" rel="noopener"> Correction Policy </a>
-                    <a href="https://banzgeek.com/about/" target="_blank" rel="noopener"> About Us </a>
-                </nav>
-            </div>
-        </footer>
-
-    </div>
-
-    {{!-- The big email subscribe modal content --}}
-    {{#if @labs.subscribers}}
-    <div id="subscribe" class="subscribe-overlay">
-        <a class="subscribe-overlay-close" href="#"></a>
-        <div class="subscribe-overlay-content">
-            {{#if @blog.logo}}
-                <img class="subscribe-overlay-logo" src="{{@blog.logo}}" alt="{{@blog.title}}" />
-            {{/if}}
-            <h1 class="subscribe-overlay-title">{{t "Subscribe to {blogtitle}" blogtitle=@blog.title}}</h1>
-            <p class="subscribe-overlay-description">{{t "Stay up to date! Get all the latest & greatest posts delivered straight to your inbox"}}</p>
-            {{subscribe_form placeholder=(t "youremail@example.com")}}
-        </div>
-    </div>
-    {{/if}}
-
+    {{!-- This variable is used to make the search form work --}}
     <script>
-        var images = document.querySelectorAll('.kg-gallery-image img');
-        images.forEach(function (image) {
-            var container = image.closest('.kg-gallery-image');
-            var width = image.attributes.width.value;
-            var height = image.attributes.height.value;
-            var ratio = width / height;
-            container.style.flex = ratio + ' 1 0%';
-        })
+      // @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&dn=expat.txt Expat
+      const ghostHost = "{{@site.url}}"
+      // @license-end
     </script>
+  </head>
+  <body class="{{body_class}}">
+    {{!-- All the main content gets inserted here, index.hbs, post.hbs, etc --}}
+    {{{body}}}
 
+    {{!-- Search form --}}
+    {{> search}}
 
-    {{!-- jQuery + Fitvids, which makes all video embeds responsive --}}
-    <script
-        src="https://code.jquery.com/jquery-3.2.1.min.js"
-        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
-        crossorigin="anonymous">
-    </script>
-    <script type="text/javascript" src="{{asset "built/jquery.fitvids.js"}}"></script>
+    {{!-- The footer --}}
+    {{> footer}}
 
-    {{#if pagination.pages}}
-    <script>
-        // maxPages is a global variable that is needed to determine
-        // if we need to load more pages for the infinitescroll, or if
-        // we reached the last page already.
-        var maxPages = parseInt('{{pagination.pages}}');
-    </script>
-    <script src="{{asset "built/infinitescroll.js"}}"></script>
-    {{/if}}
+    {{!-- Notifications alerts --}}
+    {{> "notifications"}}
 
-    {{!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. --}}
+    {{!-- Common scripts shared between pages --}}
+    <script crossorigin="anonymous" src="https://polyfill.io/v3/polyfill.min.js?features=IntersectionObserver%2CPromise%2CArray.prototype.includes%2CString.prototype.endsWith%2CString.prototype.startsWith%2CObject.assign%2CNodeList.prototype.forEach"></script>
+    <script defer src="{{asset "js/manifest.js"}}"></script>
+    <script defer src="{{asset "js/vendor/content-api.min.js"}}"></script>
+    <script defer src="{{asset "js/vendor.js"}}"></script>
+    <script defer src="{{asset "js/app.js"}}"></script>
+
+    {{!-- The #block helper will pull in data from the #contentFor other template files --}}
     {{{block "scripts"}}}
 
-    {{!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag --}}
+    {{!-- Ghost outputs important scripts and data with this tag --}}
     {{ghost_foot}}
-
-</body>
+  </body>
 </html>

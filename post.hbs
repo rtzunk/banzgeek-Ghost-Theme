@@ -1,249 +1,216 @@
+{{!--
+This template is used for the post page.
+--}}
+
+{{!-- This block preloads specific assets for the post page --}}
+{{#contentFor "preload"}}
+  <link rel="preload" href="{{asset "css/post.css"}}" as="style" />
+  <link rel="preload" href="{{asset "js/post.js"}}" as="script" />
+{{/contentFor}}
+
+{{!-- This block loads specific styles for the post page --}}
+{{#contentFor "styles"}}
+  <link rel="stylesheet" type="text/css" href="{{asset "css/post.css"}}" media="screen" />
+{{/contentFor}}
+
+{{!-- The tag below means: insert everything in this file
+into the {body} of the default.hbs template --}}
 {{!< default}}
 
-{{!-- The tag above means: insert everything in this file
-into the {body} of the default.hbs template --}}
-<header class="site-header outer border-primary-top">
-    <div class="inner-header">
-        <nav class="site-nav">
-            <div class="site-nav-left">
-                <a class="site-nav-logo" href="{{@site.url}}" aria-label="{{@site.title}}">
-                    <img src="{{@site.logo}}">
-                </a>
-            </div>
-            <div class="inner-header">
-                <div class="category-holder">
-                    <ul class="nav category-nav pull-left">
-                        <li class="nav-tag"><a href="/tag/Articals/" title="Atticals">Articals</a></li>
-                        <li class="nav-tag"><a href="/tag/news/" title="News">News</a></li>
-                        <li class="nav-tag"><a href="/tag/Tutorials/" title="Tutorials">Tutorials</a></li>
-                        
-                        
-                        <li>
-                            <a href="/categories">
-                                <span style="margin-left:0.5rem;">More...</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <a class="search-btn no-decoration pull-right" href="#searchinghost-easy">
-                        <span style="color: white;">
-                            <i class="fas fa-search fa-lg"></i>
-                        </span>
-                    </a>
-                    <a class="category-search no-decoration category-xs" href="/categories">
-                        <span style="margin-right:1.5rem;"><i class="fas fa-bars fa-2x"></i></span>
-                    </a>
-                </div>
-            </div>
-        </nav>
-    </div>
-</header>
-{{!-- Everything inside the #post tags pulls data from the post --}}
+{{!-- Special header.hbs partial to generate the <header> tag --}}
 {{#post}}
-
-<main id="site-main" class="site-main outer">
-    <div class="inner">
-
-        <article class="post-full {{post_class}} {{#unless feature_image}}no-image{{/unless}}">
-
-            
-
-            {{#if feature_image}}
-            <figure class="post-full-image" style="background-image: url({{feature_image}})">
-            </figure>
-            {{/if}}
-
-            <section class="post-full-content">  
-                <h2 class="post-full-title">{{title}}</h2>
-                <div class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="{{date format="YYYY-MM-DD"}}">{{date format="D MMMM YYYY"}}</time>
-                    {{#primary_tag}}
-                        <span class="date-divider">/</span> <a href="{{url}}">{{name}}</a>
-                    {{/primary_tag}}
-                    
-                </div>
-               </br> 
-                <div class="post-content">
-                    {{content}}
-                </div>
-            </section>
-
-            {{!-- Email subscribe form at the bottom of the page --}}
-            {{#if @labs.subscribers}}
-            <section class="subscribe-form">
-                <h3 class="subscribe-form-title">{{t "Subscribe to {blogtitle}" blogtitle=@blog.title}}</h3>
-                <p>{{t "Get the latest posts delivered right to your inbox"}}</p>
-                {{subscribe_form placeholder=(t "youremail@example.com")}}
-            </section>
-            {{/if}}
-
-            <footer class="post-full-footer">
-
-                {{!-- There are two options for how we display the byline/author-info.
-                If the post has more than one author, we load a specific template
-                from includes/byline-multiple.hbs, otherwise, we just use the
-                default byline. --}}
-
-                {{#has author="count:>1"}}
-                    {{> "byline-multiple"}}
-                {{else}}
-                    {{> "byline-single"}}
-                {{/has}}
-
-            </footer>
-
-            
-            <section class="post-full-comments">
-               <div id="graphcomment"></div>
-<script type="text/javascript">
-
-  /* - - - CONFIGURATION VARIABLES - - - */
-
-  // make sure the id is yours
-  window.gc_params = {
-    graphcomment_id: 'BANZGEEK',
-
-    // if your website has a fixed header, indicate it's height in pixels
-    fixed_header_height: 0,
-  };
-
-  /* - - - DON'T EDIT BELOW THIS LINE - - - */
-
-  
-  (function() {
-    var gc = document.createElement('script'); gc.type = 'text/javascript'; gc.async = true;
-    gc.src = 'https://graphcomment.com/js/integration.js?' + Math.round(Math.random() * 1e8);
-    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(gc);
-  })();
-
-</script>
-            </section>
-            
-
-        </article>
-
-    </div>
-</main>
-
-{{!-- Links to Previous/Next posts --}}
-<aside class="read-next outer">
-    <div class="inner">
-        <div class="read-next-feed">
-            {{#if primary_tag}}
-            {{#get "posts" filter="tags:{{primary_tag.slug}}+id:-{{id}}" limit="3" as |related_posts|}}
-                {{#if related_posts}}
-                <article class="read-next-card"
-                    {{#if ../primary_tag.feature_image}}
-                        style="background-image: url({{../primary_tag.feature_image}})"
-                    {{else}}
-                        {{#if @blog.cover_image}}
-                            style="background-image: url({{@blog.cover_image}})"{{/if}}
-                    {{/if}}
-                >
-                    <header class="read-next-card-header">
-                        <small class="read-next-card-header-sitetitle">&mdash; {{@blog.title}} &mdash;</small>
-                        {{#../primary_tag}}
-                        <h3 class="read-next-card-header-title"><a href="{{url}}">{{name}}</a></h3>
-                        {{/../primary_tag}}
-                    </header>
-                    <div class="read-next-divider">{{> "icons/infinity"}}</div>
-                    <div class="read-next-card-content">
-                        <ul>
-                            {{#foreach related_posts}}
-                            <li><a href="{{url}}">{{title}}</a></li>
-                            {{/foreach}}
-                        </ul>
-                    </div>
-                    <footer class="read-next-card-footer">
-                        <a href="{{#../primary_tag}}{{url}}{{/../primary_tag}}">{{plural meta.pagination.total empty=(t "No posts") singular=(t "1 post") plural=(t "See all % posts")}} →</a>
-                    </footer>
-                </article>
-                {{/if}}
-            {{/get}}
-            {{/if}}
-
-            {{!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs --}}
-            {{#next_post}}
-                {{> "post-card"}}
-            {{/next_post}}
-
-            {{!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs --}}
-            {{#prev_post}}
-                {{> "post-card"}}
-            {{/prev_post}}
-
-        </div>
-    </div>
-</aside>
-
-{{!-- Floating header which appears on-scroll, included from includes/floating-header.hbs --}}
-{{> floating-header}}
-
+  {{> header background=feature_image}}
 {{/post}}
+
+<main class="main-wrap">
+  {{#post}}
+    {{!-- Inject styles of the hero image to make it responsive --}}
+    {{> hero background=feature_image}}
+    </section>
+  {{/post}}
+  
+  <article>
+    <div class="l-content in-post">
+      {{!-- Everything inside the #post tags pulls data from the post --}}
+      {{#post}}
+        <div class="l-wrapper in-post {{#unless feature_image}}no-image{{/unless}} js-aos-wrapper" data-aos="fade-up"
+          data-aos-delay="300">
+          <div
+            class="l-post-content js-progress-content">
+            <header class="m-heading">
+              <h1 class="m-heading__title in-post">{{title}}</h1>
+              <div class="m-heading__meta">
+                {{#if primary_tag}}
+                  <a href="{{primary_tag.url}}" class="m-heading__meta__tag">{{primary_tag.name}}</a>
+                  <span class="m-heading__meta__divider" aria-hidden="true">&bull;</span>
+                {{/if}}
+                <span class="m-heading__meta__time">{{date published_at}}</span>
+              </div>
+            </header>
+            <div class="pos-relative js-post-content">
+              <div class="m-share">
+                <div class="m-share__content js-sticky">
+                  <a href="https://www.facebook.com/sharer/sharer.php?u={{url absolute='true'}}"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Facebook">
+                    <span class="icon-facebook" aria-hidden="true"></span>
+                  </a>
+                  <a href="https://twitter.com/intent/tweet?text={{encode title}}&url={{url absolute='true'}}"
+                    class="m-icon-button filled in-share" target="_blank" rel="noopener" aria-label="Twitter">
+                    <span class="icon-twitter" aria-hidden="true"></span>
+                  </a>
+                  <button class="m-icon-button filled in-share progress js-scrolltop" aria-label="{{t "Scroll to top"}}">
+                    <span class="icon-arrow-top" aria-hidden="true"></span>
+                    <svg aria-hidden="true">
+                      <circle class="progress-ring__circle js-progress" fill="transparent" r="0" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              {{content}}
+              {{!-- List of tags  --}}
+              {{#if tags}}
+                <section class="m-tags in-post">
+                  <h3 class="m-submenu-title">{{t "Tags"}}</h3>
+                  <ul>
+                    {{#foreach tags}}
+                      <li>
+                        <a href="{{url}}" title="{{name}}">{{name}}</a>
+                      </li>
+                    {{/foreach}}
+                  </ul>
+                </section>
+              {{/if}}
+            </div>
+          </div>
+        </div>
+        {{!-- Email subscribe form at the bottom of the page --}}
+         <section class="m-subscribe-section js-newsletter">
+          <div class="l-wrapper in-post">
+            <div class="m-subscribe-section__content">
+              <div class="m-subscribe-section__text">
+                <h4 class="m-subscribe-section__title">{{t "Subscribe to our newsletter"}}</h4>
+                <p class="m-subscribe-section__description">
+                  {{t "Get the latest posts delivered right to your inbox."}}
+                </p>
+              </div>
+              <div class="m-subscribe-section__form">
+                {{> "newsletter-form"}}
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="m-author">
+          <div class="m-author__content">
+            <div class="m-author__picture">
+              <a href="{{primary_author.url}}" class="m-author-picture" aria-label="{{primary_author.name}}">
+                {{#if primary_author.profile_image}}
+                  <div style="background-image: url({{primary_author.profile_image}});"></div>
+                {{else}}
+                  <div style="background-image: url({{asset "images/default-avatar-square-small.jpg"}});"></div>
+                {{/if}}
+              </a>
+            </div>
+            <div class="m-author__info">
+              <h4 class="m-author__name">
+                <a href="{{primary_author.url}}">{{primary_author.name}}</a>
+              </h4>
+              {{#has author="count:>1"}}
+                <p class="m-small-text in-author-along-with">
+                  {{authors separator=", " prefix=(t "Among with no break line") from="2"}}
+                </p>
+              {{/has}}
+              {{#if primary_author.bio}}
+                <p class="m-author__bio">{{primary_author.bio}}</p>
+              {{/if}}
+              <ul class="m-author-links">
+                {{#if primary_author.website}}
+                  <li>
+                    <a href="{{primary_author.website}}" target="_blank" rel="noopener" aria-label="{{t "Website"}}">
+                      <span class="icon-globe" aria-hidden="true"></span>
+                    </a>
+                  </li>
+                {{/if}}
+                {{#if primary_author.facebook}}
+                  <li>
+                    <a href="https://facebook.com/{{primary_author.facebook}}" target="_blank" rel="noopener" aria-label="Facebook">
+                      <span class="icon-facebook" aria-hidden="true"></span>
+                    </a>
+                  </li>
+                {{/if}}
+                {{#if primary_author.twitter}}
+                  <li>
+                    <a href="https://twitter.com/{{primary_author.twitter}}" target="_blank" rel="noopener" aria-label="Twitter">
+                      <span class="icon-twitter" aria-hidden="true"></span>
+                    </a>
+                  </li>
+                {{/if}}
+              </ul>
+            </div>
+          </div>
+        </section>
+        
+          <section class="m-comments">
+            <section class="post-full-comments">
+             
+
+          </section>
+  
+      {{/post}}
+      {{!-- Related posts --}}
+      {{#if post.tags.length}}
+        {{#get "posts" limit="3" filter="tags:[{{post.tags}}]+id:-{{post.id}}" include="tags,authors" as |related|}}
+          <section class="m-recommended">
+            <div class="l-wrapper in-recommended">
+              <h3 class="m-section-title in-recommended">{{t "Recommended for you"}}</h3>
+              <div class="m-recommended-articles">
+                <div class="m-recommended-slider glide js-recommended-slider">
+                  <div class="glide__track" data-glide-el="track">
+                    <div class="glide__slides">
+                      {{!-- The tag below iterates over all the related posts --}}
+                      {{> "loop"}}
+                    </div>
+                  </div>
+                  <div data-glide-el="controls" class="glide__arrows js-controls">
+                    <button data-glide-dir="<" class="m-icon-button filled in-recommended-articles glide-prev" aria-label="{{t "Previous"}}">
+                      <span class="icon-arrow-left" aria-hidden="true"></span>
+                    </button>
+                    <button data-glide-dir=">" class="m-icon-button filled in-recommended-articles glide-next" aria-label="{{t "Next"}}">
+                      <span class="icon-arrow-right" aria-hidden="true"></span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        {{/get}}
+      {{else}}
+        <section class="m-recommended">
+          <div class="l-wrapper in-recommended">
+            <h3 class="m-section-title in-recommended">{{t "Recommended for you"}}</h3>
+            <div class="m-recommended-articles">
+              <div class="m-recommended-slider glide js-recommended-slider">
+                <div class="glide__track" data-glide-el="track">
+                  <div class="glide__slides">
+                    <div class="m-recommended-slider__item glide__slide">
+                      <div class="m-heading no-margin">
+                        <h3>{{t "No posts found"}}</h3>
+                        <p>
+                          {{t "Apparently there are no posts at the moment, check again later."}}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      {{/if}}
+    </div>
+  </article>
+</main>
 
 {{!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs --}}
 {{#contentFor "scripts"}}
-<script>
-
-// NOTE: Scroll performance is poor in Safari
-// - this appears to be due to the events firing much more slowly in Safari.
-//   Dropping the scroll event and using only a raf loop results in smoother
-//   scrolling but continuous processing even when not scrolling
-$(document).ready(function () {
-    // Start fitVids
-    var $postContent = $(".post-full-content");
-    $postContent.fitVids();
-    // End fitVids
-
-    var progressBar = document.querySelector('#reading-progress');
-    var header = document.querySelector('.floating-header');
-    var title = document.querySelector('.post-full-title');
-
-    var lastScrollY = window.scrollY;
-    var lastWindowHeight = window.innerHeight;
-    var lastDocumentHeight = $(document).height();
-    var ticking = false;
-
-    function onScroll() {
-        lastScrollY = window.scrollY;
-        requestTick();
-    }
-
-    function onResize() {
-        lastWindowHeight = window.innerHeight;
-        lastDocumentHeight = $(document).height();
-        requestTick();
-    }
-
-    function requestTick() {
-        if (!ticking) {
-            requestAnimationFrame(update);
-        }
-        ticking = true;
-    }
-
-    function update() {
-        var trigger = title.getBoundingClientRect().top + window.scrollY;
-        var triggerOffset = title.offsetHeight + 35;
-        var progressMax = lastDocumentHeight - lastWindowHeight;
-
-        // show/hide floating header
-        if (lastScrollY >= trigger + triggerOffset) {
-            header.classList.add('floating-active');
-        } else {
-            header.classList.remove('floating-active');
-        }
-
-        progressBar.setAttribute('max', progressMax);
-        progressBar.setAttribute('value', lastScrollY);
-
-        ticking = false;
-    }
-
-    window.addEventListener('scroll', onScroll, {passive: true});
-    window.addEventListener('resize', onResize, false);
-
-    update();
-
-});
-</script>
+  <script defer src="{{asset "js/post.js"}}"></script>
 {{/contentFor}}
